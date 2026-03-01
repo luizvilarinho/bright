@@ -79,7 +79,7 @@ export default function ComoEFeito() {
                 />
               )}
 
-              <div className="font-display mb-4 text-3xl font-[300] text-amber/40">
+              <div className="font-display mb-4 text-3xl font-[300] text-amber-400">
                 {step.number}
               </div>
               <div className="mb-3 h-px w-8 bg-amber" />

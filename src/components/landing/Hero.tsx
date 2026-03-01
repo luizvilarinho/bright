@@ -25,7 +25,7 @@ export default function Hero() {
         className="absolute inset-0"
         style={{
           background:
-            'radial-gradient(ellipse at 60% 40%, #2A1A0E 0%, #1A0F07 50%, #0E0804 100%)',
+            'radial-gradient(ellipse at 60% 40%, #392217 0%, #1c1007 50%, #0f0905 100%)',
         }}
       />
 
@@ -100,9 +100,9 @@ export default function Hero() {
             className="fade-up font-display mb-6 font-[300] leading-[1.05] text-cream"
             style={{ fontSize: 'clamp(3rem, 7vw, 5.5rem)' }}
           >
-            Feita com intenção.
+            Ilumine o que 
             <br />
-            <em className="font-[300] italic text-amber/90">Acesa com calma.</em>
+            <em className="font-[300] italic text-amber/90">importa</em>
           </h1>
 
           <p

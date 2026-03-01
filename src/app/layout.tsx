@@ -21,9 +21,39 @@ const jost = Jost({
 })
 
 export const metadata: Metadata = {
-  title: 'Bright — Velas Artesanais',
+  metadataBase: new URL('https://bright-velas.vercel.app'), // TODO: Change to your production domain
+  title: {
+    default: 'Bright — Velas Artesanais',
+    template: '%s | Bright',
+  },
   description:
     'Velas feitas à mão com cera natural, óleos essenciais e intenção. Para momentos que importam.',
+  openGraph: {
+    title: 'Bright — Velas Artesanais',
+    description:
+      'Velas feitas à mão com cera natural, óleos essenciais e intenção. Para momentos que importam.',
+    url: 'https://bright-velas.vercel.app',
+    siteName: 'Bright Velas Artesanais',
+    locale: 'pt_BR',
+    type: 'website',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Bright — Velas Artesanais',
+    description:
+      'Velas feitas à mão com cera natural, óleos essenciais e intenção.',
+  },
 }
 
 export default function RootLayout({

@@ -12,8 +12,14 @@ const navLinks = [
 export default function Header() {
   const [scrolled, setScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
+  const [mounted, setMounted] = useState(false)
   const { totalItems, openCart } = useCartStore()
-  const count = totalItems()
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  const count = mounted ? totalItems() : 0
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 40)
@@ -24,7 +30,9 @@ export default function Header() {
   // Lock body scroll when mobile menu open
   useEffect(() => {
     document.body.style.overflow = mobileOpen ? 'hidden' : ''
-    return () => { document.body.style.overflow = '' }
+    return () => {
+      document.body.style.overflow = ''
+    }
   }, [mobileOpen])
 
   return (
@@ -40,7 +48,7 @@ export default function Header() {
           {/* Logo */}
           <Link
             href="/"
-            className="font-display text-xl font-[300] tracking-[0.2em] text-cocoa uppercase md:text-2xl"
+            className="font-display text-cocoa text-xl font-[300] tracking-[0.2em] uppercase md:text-2xl"
             onClick={() => setMobileOpen(false)}
           >
             Bright
@@ -52,7 +60,7 @@ export default function Header() {
               <Link
                 key={link.href}
                 href={link.href}
-                className="nav-link font-body text-[0.82rem] font-[400] tracking-[0.1em] text-cocoa/80 uppercase hover:text-cocoa"
+                className="nav-link font-body text-cocoa/80 hover:text-cocoa text-[0.82rem] font-[400] tracking-[0.1em] uppercase"
               >
                 {link.label}
               </Link>
@@ -65,11 +73,11 @@ export default function Header() {
             <button
               aria-label={`Carrinho — ${count} ${count === 1 ? 'item' : 'itens'}`}
               onClick={openCart}
-              className="relative flex h-9 w-9 cursor-pointer items-center justify-center text-cocoa transition-opacity duration-200 hover:opacity-60"
+              className="text-cocoa relative flex h-9 w-9 cursor-pointer items-center justify-center transition-opacity duration-200 hover:opacity-60"
             >
               <CartIcon />
               {count > 0 && (
-                <span className="absolute -top-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-amber text-[0.6rem] font-[500] text-linen">
+                <span className="bg-amber text-linen absolute -top-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full text-[0.6rem] font-[500]">
                   {count > 9 ? '9+' : count}
                 </span>
               )}
@@ -82,13 +90,13 @@ export default function Header() {
               className="flex h-9 w-9 cursor-pointer flex-col items-center justify-center gap-[5px] md:hidden"
             >
               <span
-                className={`h-px w-5 bg-cocoa transition-all duration-300 ${mobileOpen ? 'translate-y-[7px] rotate-45' : ''}`}
+                className={`bg-cocoa h-px w-5 transition-all duration-300 ${mobileOpen ? 'translate-y-[7px] rotate-45' : ''}`}
               />
               <span
-                className={`h-px w-5 bg-cocoa transition-all duration-300 ${mobileOpen ? 'opacity-0' : ''}`}
+                className={`bg-cocoa h-px w-5 transition-all duration-300 ${mobileOpen ? 'opacity-0' : ''}`}
               />
               <span
-                className={`h-px w-5 bg-cocoa transition-all duration-300 ${mobileOpen ? '-translate-y-[7px] -rotate-45' : ''}`}
+                className={`bg-cocoa h-px w-5 transition-all duration-300 ${mobileOpen ? '-translate-y-[7px] -rotate-45' : ''}`}
               />
             </button>
           </div>
@@ -97,8 +105,10 @@ export default function Header() {
 
       {/* Mobile Menu Overlay */}
       <div
-        className={`fixed inset-0 z-40 flex flex-col items-center justify-center bg-cream transition-all duration-500 md:hidden ${
-          mobileOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+        className={`bg-cream fixed inset-0 z-40 flex flex-col items-center justify-center transition-all duration-500 md:hidden ${
+          mobileOpen
+            ? 'pointer-events-auto opacity-100'
+            : 'pointer-events-none opacity-0'
         }`}
       >
         <nav className="flex flex-col items-center gap-8">
@@ -107,7 +117,7 @@ export default function Header() {
               key={link.href}
               href={link.href}
               onClick={() => setMobileOpen(false)}
-              className="font-display text-3xl font-[300] tracking-wide text-cocoa transition-opacity duration-200 hover:opacity-60"
+              className="font-display text-cocoa text-3xl font-[300] tracking-wide transition-opacity duration-200 hover:opacity-60"
               style={{ transitionDelay: mobileOpen ? `${i * 60}ms` : '0ms' }}
             >
               {link.label}
@@ -116,9 +126,10 @@ export default function Header() {
           <Link
             href="/carrinho"
             onClick={() => setMobileOpen(false)}
-            className="font-display text-3xl font-[300] tracking-wide text-cocoa transition-opacity duration-200 hover:opacity-60"
+            className="font-display text-cocoa text-3xl font-[300] tracking-wide transition-opacity duration-200 hover:opacity-60"
           >
-            Carrinho {count > 0 && <span className="text-amber">({count})</span>}
+            Carrinho{' '}
+            {count > 0 && <span className="text-amber">({count})</span>}
           </Link>
         </nav>
       </div>

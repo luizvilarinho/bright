@@ -1,10 +1,10 @@
 'use client'
 
+import { useCartStore } from '@/store/cartStore'
+import { Product } from '@/types'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useState } from 'react'
-import { Product } from '@/types'
-import { useCartStore } from '@/store/cartStore'
 
 type ProductCardProps = {
   product: Product
@@ -63,7 +63,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           <p className="line-clamp-2 text-sm leading-relaxed text-smoke">
             {product.shortDescription}
           </p>
-          <p className="font-display mt-1 text-lg font-[300] italic text-amber">
+          <p className="font-display mt-1 text-lg font-[300] italic text-amber-500">
             R$ {product.price.toFixed(2).replace('.', ',')}
           </p>
         </div>

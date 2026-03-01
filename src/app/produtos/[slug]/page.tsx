@@ -18,9 +18,30 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
   const product = getProdutoBySlug(slug)
   if (!product) return {}
+
+  const images = product.images.map((img) => ({
+    url: img,
+    width: 800,
+    height: 600,
+    alt: product.name,
+  }))
+
   return {
-    title: `${product.name} — Bright`,
-    description: product.shortDescription,
+    title: product.name,
+    description: product.description,
+    openGraph: {
+      title: product.name,
+      description: product.shortDescription,
+      url: `/produtos/${slug}`,
+      images: images,
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: product.name,
+      description: product.shortDescription,
+      images: [product.images[0]],
+    },
   }
 }
 
@@ -28,6 +49,29 @@ export default async function ProdutoPage({ params }: Props) {
   const { slug } = await params
   const product = getProdutoBySlug(slug)
   if (!product) notFound()
+
+  // JSON-LD for Rich Snippets
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: product.name,
+    image: product.images,
+    description: product.description,
+    brand: {
+      '@type': 'Brand',
+      name: 'Bright',
+    },
+    offers: {
+      '@type': 'Offer',
+      url: `https://bright-velas.vercel.app/produtos/${slug}`,
+      priceCurrency: 'BRL',
+      price: product.price,
+      itemCondition: 'https://schema.org/NewCondition',
+      availability: product.inStock
+        ? 'https://schema.org/InStock'
+        : 'https://schema.org/OutOfStock',
+    },
+  }
 
   // Related products (same category, excluding current)
   const related = produtos
@@ -37,11 +81,19 @@ export default async function ProdutoPage({ params }: Props) {
   return (
     <>
       {/* Breadcrumb */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <div className="mx-auto max-w-7xl px-6 pt-28 pb-2 md:px-12 md:pt-36 lg:px-20">
-        <nav className="flex items-center gap-2 text-[0.68rem] tracking-wider text-smoke/60 uppercase">
-          <Link href="/" className="transition-colors hover:text-cocoa">Início</Link>
+        <nav className="text-smoke/60 flex items-center gap-2 text-[0.68rem] tracking-wider uppercase">
+          <Link href="/" className="hover:text-cocoa transition-colors">
+            Início
+          </Link>
           <span>/</span>
-          <Link href="/produtos" className="transition-colors hover:text-cocoa">Coleção</Link>
+          <Link href="/produtos" className="hover:text-cocoa transition-colors">
+            Coleção
+          </Link>
           <span>/</span>
           <span className="text-cocoa">{product.name}</span>
         </nav>
@@ -55,7 +107,7 @@ export default async function ProdutoPage({ params }: Props) {
             {product.images.map((img, i) => (
               <div
                 key={i}
-                className={`relative overflow-hidden rounded-[4px] bg-sand ${
+                className={`bg-sand relative overflow-hidden rounded-[4px] ${
                   i === 0 ? 'col-span-2' : 'col-span-1'
                 }`}
                 style={{ aspectRatio: i === 0 ? '4/3' : '3/4' }}
@@ -75,27 +127,27 @@ export default async function ProdutoPage({ params }: Props) {
           {/* Info */}
           <div className="flex flex-col">
             {/* Category */}
-            <p className="mb-3 text-[0.7rem] font-[500] tracking-[0.2em] text-sage uppercase">
+            <p className="text-sage mb-3 text-[0.7rem] font-[500] tracking-[0.2em] uppercase">
               {product.category}
             </p>
 
             {/* Name */}
             <h1
-              className="font-display mb-2 font-[300] leading-tight text-cocoa"
+              className="font-display text-cocoa mb-2 leading-tight font-[300]"
               style={{ fontSize: 'clamp(2rem, 4vw, 3rem)' }}
             >
               {product.name}
             </h1>
 
             {/* Price */}
-            <p className="font-display mb-6 text-2xl font-[300] italic text-amber">
+            <p className="font-display text-amber mb-6 text-2xl font-[300] italic">
               R$ {product.price.toFixed(2).replace('.', ',')}
             </p>
 
-            <div className="mb-6 h-px w-full bg-mist" />
+            <div className="bg-mist mb-6 h-px w-full" />
 
             {/* Short description */}
-            <p className="mb-6 text-base leading-[1.9] text-smoke">
+            <p className="text-smoke mb-6 text-base leading-[1.9]">
               {product.description}
             </p>
 
@@ -106,11 +158,11 @@ export default async function ProdutoPage({ params }: Props) {
                 { label: 'Queima', value: product.burnTime },
                 { label: 'Tamanho', value: product.size },
               ].map((detail) => (
-                <div key={detail.label} className="bg-linen p-4 rounded-[4px]">
-                  <p className="mb-1 text-[0.65rem] tracking-[0.16em] text-smoke/60 uppercase">
+                <div key={detail.label} className="bg-linen rounded-[4px] p-4">
+                  <p className="text-smoke/60 mb-1 text-[0.65rem] tracking-[0.16em] uppercase">
                     {detail.label}
                   </p>
-                  <p className="font-display text-sm font-[400] text-cocoa">
+                  <p className="font-display text-cocoa text-sm font-[400]">
                     {detail.value}
                   </p>
                 </div>
@@ -121,11 +173,11 @@ export default async function ProdutoPage({ params }: Props) {
             <AddToCartButton product={product} />
 
             {/* Care instructions */}
-            <div className="mt-8 border-t border-mist pt-6">
-              <p className="mb-2 text-[0.68rem] tracking-[0.16em] text-smoke/60 uppercase">
+            <div className="border-mist mt-8 border-t pt-6">
+              <p className="text-smoke/60 mb-2 text-[0.68rem] tracking-[0.16em] uppercase">
                 Cuidados
               </p>
-              <ul className="space-y-1.5 text-sm text-smoke">
+              <ul className="text-smoke space-y-1.5 text-sm">
                 <li>• Apague após 4 horas de uso contínuo</li>
                 <li>• Mantenha o pavio aparado a 5mm antes de acender</li>
                 <li>• Evite correntes de ar durante o uso</li>
